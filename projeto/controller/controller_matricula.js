@@ -19,7 +19,7 @@ const getListarMatriculas = async function() {
 
         if (dadosMatricula) {
 
-            if(dadosMatricula.length > 0) {
+            if (dadosMatricula.length > 0) {
 
                 for (let matricula of dadosMatricula) {
 
@@ -27,7 +27,7 @@ const getListarMatriculas = async function() {
                     
                     if(matriculaTurma.length > 0) {
 
-                        matricula.matriculaTurma = matriculaTurma
+                        matricula.turma = matriculaTurma
                         
                     }
                 }

@@ -101,19 +101,17 @@ const updateMatricula = async function(id, dadosMatricula) {
                                             data_fim    = '${dadosMatricula.data_fim}
             where id = ${id}`;
 
-            let result = await prisma.$executeRawUnsafe(sql);
+        let result = await prisma.$executeRawUnsafe(sql);
 
-            if (result)
-                return true;
-            else
-                return false;
+        if (result)
+            return true;
+        else
+            return false;
 
     } catch (error) {
         return false;
     }
 }
-
-
 
 module.exports = {
     selectAllMatriculas,
