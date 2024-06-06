@@ -24,7 +24,7 @@ const selectAllMatriculas = async function() {
 const selectByIdMatricula = async function(id) {
     try{
 
-        let sql = `select * from tbl_matriculas where id = ${id}`;
+        let sql = `select * from tbl_matriculas where id_aluno = ${id}`;
 
         let rsMatricula = await prisma.$queryRawUnsafe(sql)
 

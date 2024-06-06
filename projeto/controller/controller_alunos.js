@@ -3,6 +3,7 @@ const e = require('express')
 const alunoDAO = require('../model/DAO/alunos.js')
 const turmaDAO = require('../model/DAO/turmas.js')
 const matriculaDAO = require('../model/DAO/matricula.js')
+const sexoDAO = require('../model/DAO/sexo.js')
 
 const message = require('../modulo/config.js')
 
@@ -111,10 +112,31 @@ const getListarAlunos=async function(){
 
                 for (let aluno of dadosAlunos) {
 
-                    let matricula = await matriculaDAO.selectByIdMatricula(aluno.id)
-                    let turma = await turmaDAO.selectTurmaById(aluno.id)
-                    aluno.matricula = matricula
-                    aluno.turma = turma
+                    let sexoAluno = await sexoDAO.selectSexoById(aluno.id)
+                    delete aluno.id_sexo
+                    aluno.sexo = sexoAluno
+                }
+
+                for (let aluno of dadosAlunos) {
+
+                    let matriculaAluno = await matriculaDAO.selectByIdMatricula(aluno.id)
+
+                    if (matriculaAluno.length > 0) {
+
+                        aluno.matricula = matriculaAluno
+
+                    }
+                }
+
+                for (let aluno of dadosAlunos) {
+
+                    let turmaAluno = await turmaDAO.selectTurmaById(aluno.id)
+
+                    if (turmaAluno.length > 0) {
+
+                        aluno.turma = turmaAluno
+
+                    }
                 }
 
                 alunosJSON.alunos = dadosAlunos
@@ -131,23 +153,62 @@ const getListarAlunos=async function(){
     }
 }
 
-const getBuscarAlunoPeloID=async function(id){
+const getBuscarAlunoPeloID=async function(id) {
     try {
-        let idAluno=id
-        let alunosJSON={}
-        if(idAluno==''||idAluno==undefined||isNaN(idAluno))
+
+        let idAluno = id
+
+        let alunosJSON = {}
+
+        if(idAluno == '' || idAluno == undefined || isNaN(idAluno)) {
             return message.ERROR_INVALID_ID
-        else{
-            let dadosAluno=await alunoDAO.selectByIDAluno(idAluno)
-            if(dadosAluno){
-                if(dadosAluno.length>0){
-                    alunosJSON.aluno=dadosAluno
-                    alunosJSON.status_code=200
+        } else {
+
+            let dadosAluno = await alunoDAO.selectByIDAluno(idAluno)
+            
+            if (dadosAluno) {
+
+                if (dadosAluno.length > 0 ) {
+
+                    for (let aluno of dadosAluno) {
+
+                        let matriculaAluno = await matriculaDAO.selectByIdMatricula(aluno.id)
+    
+                        if (matriculaAluno.length > 0) {
+    
+                            aluno.matricula = matriculaAluno
+    
+                        }
+                    }
+    
+                    for (let aluno of dadosAluno) {
+    
+                        let turmaAluno = await turmaDAO.selectTurmaById(aluno.id)
+    
+                        if (turmaAluno.length > 0) {
+    
+                            aluno.turma = turmaAluno
+    
+                        }
+                    }
+
+                    for (let aluno of dadosAluno) {
+
+                        let sexoAluno = await sexoDAO.selectSexoById(aluno.id)
+                        delete aluno.id_sexo
+                        aluno.sexo = sexoAluno
+                    }
+
+                    alunosJSON.aluno = dadosAluno
+                    alunosJSON.status_code = 200
                     return alunosJSON
-                }else
+
+                } else {
                     return message.ERROR_NOT_FOUND
-            }else
+                }
+            } else {
                 return message.ERROR_INTERNAL_SERVER_DB
+            }
         }
     } catch (error) {
         return message.ERROR_INTERNAL_SERVER

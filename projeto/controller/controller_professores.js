@@ -8,6 +8,7 @@
 const message = require('../modulo/config.js')
 
 const professorDAO = require('../model/DAO/professores.js')
+const sexoDAO = require('../model/DAO/sexo.js')
 
 const getListarProfessores = async function() {
     try {
@@ -18,14 +19,23 @@ const getListarProfessores = async function() {
 
         if(dadoProfessores) {
 
-            professorJSON.professores = dadoProfessores;
-            professorJSON.quantidade = dadoProfessores.length;
-            professorJSON.status_code = 200;
-            return professorJSON;
+            if (dadoProfessores.length > 0) {
+                
+                for (let professor of dadoProfessores) {
 
-        } else {
-            return false;
-        }
+                    let sexoProfessor = await sexoDAO.selectSexoById(professor.id)
+                    delete professor.id_sexo
+                    professor.sexo = sexoProfessor
+                }
+
+                professorJSON.professores = dadoProfessores;
+                professorJSON.quantidade = dadoProfessores.length;
+                professorJSON.status_code = 200;
+                return professorJSON;
+            }else {
+                return false;
+            }
+        } 
     } catch (error) {
         return message.ERROR_INTERNAL_SERVER
     }
@@ -47,6 +57,13 @@ const getBuscarProfessor = async function(id) {
             if (dadoProfessores) {
 
                 if (dadoProfessores.length > 0) {
+
+                    for (let professor of dadoProfessores) {
+
+                        let sexoProfessor = await sexoDAO.selectSexoById(professor.id)
+                        delete professor.id_sexo
+                        professor.sexo = sexoProfessor
+                    }
 
                     professorJSON.professor = dadoProfessores;
                     professorJSON.status_code = 200;
@@ -115,10 +132,6 @@ const setInserirNovoProfessor = async function(dadoProfessor, contentType) {
                     let novoProfessor = await professorDAO.insertProfessores(dadoProfessor);
 
                     if (novoProfessor) {
-
-                        let id = await professorDAO.selectByLastIdProfessor
-
-                        dadoProfessor.id = id[0].id;
 
                         novoProfessorJSON.professor = dadoProfessor;
                         novoProfessorJSON.status = message.SUCCESS_CREATED_ITEM.status;
