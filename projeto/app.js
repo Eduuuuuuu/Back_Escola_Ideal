@@ -49,8 +49,13 @@ app.use((request, response, next) => {
 /*****************************  Import dos arquivos da controller do projeto  ******************************************/
     const controllerMatriculas = require('./controller/controller_matricula.js');
     const controllerProfessores = require('./controller/controller_professores.js');
-    const controllerAlunos = require('./controller/controller_alunos.js')
-    const controllerResponsaveis = require('./controller/controller_responsaveis.js')
+    const controllerAlunos = require('./controller/controller_alunos.js');
+    const controllerResponsaveis = require('./controller/controller_responsaveis.js');
+    const controllerDisciplinas = require('./controller/controller_disciplinas');
+    const controllerComunicados = require('./controller/controller.comunicados.js');
+    const controllerTurmas = require('./controller/controller_turmas.js');
+    const controllerFrequencia = require('./controller/controller_frequencia.js');
+    const controllerNotas = require('./controller/controller_notas.js');
 /***********************************************************************************************************************/
 
 ////Criando um objeto para controlar a chegada dos dados da requisição em formato JSON
@@ -178,7 +183,7 @@ app.put('/v1/escolaIdeal/updateProfessor/:id', cors(), bodyParserJSON, async fun
 
 /**************************************************** ENDPOINTS ALUNOS ****************************************************/
 
-app.get('/v1/escolaideal/alunos', cors(), async function(request, response) {
+app.get('/v1/escolaIdeal/alunos', cors(), async function(request, response) {
     
     let dadosAlunos = await controllerAlunos.getListarAlunos()
     
@@ -186,7 +191,7 @@ app.get('/v1/escolaideal/alunos', cors(), async function(request, response) {
     response.json(dadosAlunos)
 })
 
-app.get('/v1/escolaideal/aluno/:id', cors(), async function(request, response) {
+app.get('/v1/escolaIdeal/aluno/:id', cors(), async function(request, response) {
     
     let idAluno = request.params.id
     
@@ -196,7 +201,7 @@ app.get('/v1/escolaideal/aluno/:id', cors(), async function(request, response) {
     response.json(dadosAluno)
 })
 
-app.get('/v1/escolaideal/alunos/turma/:id', cors(), async function(request, response) {
+app.get('/v1/escolaIdeal/alunos/turma/:id', cors(), async function(request, response) {
     
     let idTurma = request.params.id
     
@@ -206,7 +211,7 @@ app.get('/v1/escolaideal/alunos/turma/:id', cors(), async function(request, resp
     response.json(dadosAluno)
 })
 
-app.post('/v1/escolaideal/aluno/insert',cors(), bodyParserJSON, async function(request, response) {
+app.post('/v1/escolaIdeal/aluno/insert',cors(), bodyParserJSON, async function(request, response) {
     
     let contentType = request.headers['content-type']
     
@@ -218,7 +223,7 @@ app.post('/v1/escolaideal/aluno/insert',cors(), bodyParserJSON, async function(r
     response.json(resultDadosNovoAluno)
 })
 
-app.put('/v1/escolaideal/aluno/update/:id', cors(), bodyParserJSON, async function(request, response) {
+app.put('/v1/escolaIdeal/aluno/update/:id', cors(), bodyParserJSON, async function(request, response) {
     
     let idAluno = request.params.id
 
@@ -232,7 +237,7 @@ app.put('/v1/escolaideal/aluno/update/:id', cors(), bodyParserJSON, async functi
     response.json(resultDadosAlunoAtualizado)
 })
 
-app.delete('/v1/escolaideal/aluno/delete/:id', cors(), async function(request, response) {
+app.delete('/v1/escolaIdeal/aluno/delete/:id', cors(), async function(request, response) {
 
     let idAluno = request.params.id
 
@@ -244,7 +249,7 @@ app.delete('/v1/escolaideal/aluno/delete/:id', cors(), async function(request, r
 
 /**************************************************** ENDPOINTS RESPONSAVEIS ****************************************************/
 
-app.get('/v1/escolaideal/responsaveis', cors(), async function(request, response) {
+app.get('/v1/escolaIdeal/responsaveis', cors(), async function(request, response) {
     
     let dadosResponsaveis = await controllerResponsaveis.getListarResponsaveis()
     
@@ -252,7 +257,7 @@ app.get('/v1/escolaideal/responsaveis', cors(), async function(request, response
     response.json(dadosResponsaveis)
 })
 
-app.post('/v1/escolaideal/responsavel/insert', cors(), bodyParserJSON, async function(request, response) {
+app.post('/v1/escolaIdeal/responsavel/insert', cors(), bodyParserJSON, async function(request, response) {
     
     let contentType = request.headers['content-type']
     
@@ -262,6 +267,276 @@ app.post('/v1/escolaideal/responsavel/insert', cors(), bodyParserJSON, async fun
     
     response.status(resultDadosNovoAluno.status_code)
     response.json(resultDadosNovoAluno)
+})
+
+/**************************************************** ENDPOINTS DISCIPLINAS ****************************************************/
+
+app.get('/v1/escolaIdeal/disciplinas', cors(), async function (request, response) {
+    
+    let dadosDisciplinas = await controllerDisciplinas.getListarDisciplinas()
+
+    if (dadosDisciplinas) {
+        response.json(dadosDisciplinas)
+        response.status(dadosDisciplinas.status_code)
+    } else {
+        response.json
+    }
+})
+
+app.delete('/v1/escolaIdeal/deleteDisciplina/:id', cors(), async function(request,response) {
+    
+    let idDisciplina = request.params.id
+
+    let dadosDisciplina = await controllerDisciplinas.setExcluirDisciplina(idDisciplina)
+
+    response.json(dadosDisciplina)
+    response.status(dadosDisciplina.status_code)
+})
+
+app.post('/v1/escolaIdeal/disciplina', cors(), bodyParserJSON, async function(request, response) {
+
+    let contentType = request.headers['content-type']
+
+    let dadosBody = request.body
+
+    let dadosDisciplina = await controllerDisciplinas.setInserirDisciplina(dadosBody, contentType)
+
+    response.json(dadosDisciplina)
+    response.status(dadosDisciplina.status_code)
+})
+
+app.put('/v1/escolaIdeal/updateDisciplina/:id', cors(), bodyParserJSON,  async function(request,response) {
+    
+    let idDisciplina = request.params.id
+    
+    let contentType = request.headers['content-type']
+    
+    let dadosBody = request.body
+
+    let atualizacaoDisciplina = await controllerDisciplinas.setAtualizarDisciplina(idDisciplina,dadosBody, contentType)
+
+    response.json(atualizacaoDisciplina)
+    response.status(atualizacaoDisciplina.status_code)
+})
+
+app.get('/v1/escolaIdeal/disciplina/:id', cors(), async function(request, response) {
+    
+    let idDisciplina = request.params.id
+
+    let dadosDisciplina = await controllerDisciplinas.getDisciplinaById(idDisciplina)
+
+    if (dadosDisciplina) {
+        response.json(dadosDisciplina)
+        response.status(200)
+    } else {
+        response.json({message: 'Nenhum registro foi encontrado!'})
+        response.status(404)
+    }
+})
+
+/**************************************************** ENDPOINTS COMUNICADOS ****************************************************/
+
+app.get('/v1/escolaIdeal/comunicados', cors(), async function (request, response) {
+    
+    let dadosComunicados = await controllerComunicados.getListarComunicados()
+
+    if (dadosComunicados) {
+        response.json(dadosComunicados)
+        response.status(dadosComunicados.status_code)
+    } else {
+        response.json
+    }
+})
+
+app.delete('/v1/escolaIdeal/deleteComunicado/:id', cors(), async function(request,response) {
+    
+    let idComunicado = request.params.id
+
+    let dadosComunicado = await controllerComunicados.setExcluirComunicado(idComunicado)
+
+    response.json(dadosComunicado)
+    response.status(dadosComunicado.status_code)
+})
+
+app.post('/v1/escolaIdeal/comunicado', cors(), bodyParserJSON, async function(request, response) {
+
+    let contentType = request.headers['content-type']
+
+    let dadosBody = request.body
+
+    let dadosComunicado = await controllerComunicados.setInserirComunicado(dadosBody, contentType)
+
+    response.json(dadosComunicado)
+    response.status(dadosComunicado.status_code)
+})
+
+app.put('/v1/escolaIdeal/updateComunicado/:id', cors(), bodyParserJSON,  async function(request,response) {
+    
+    let idComunicado = request.params.id
+    
+    let contentType = request.headers['content-type']
+    
+    let dadosBody = request.body
+
+    let atualizacaoComunicado = await controllerComunicados.setAtualizarComunicado(idComunicado, dadosBody, contentType)
+
+    response.json(atualizacaoComunicado)
+    response.status(atualizacaoComunicado.status_code)
+})
+
+app.get('/v1/escolaIdeal/comunicado/:id', cors(), async function(request, response) {
+    
+    let idComunicado = request.params.id
+
+    let dadosComunicado = await controllerComunicados.getComunicadoById(idComunicado)
+
+    if (dadosComunicado) {
+        response.json(dadosComunicado)
+        response.status(200)
+    } else {
+        response.json({message: 'Nenhum registro foi encontrado!'})
+        response.status(404)
+    }
+})
+
+/**************************************************** ENDPOINTS TURMAS ****************************************************/
+
+app.get('/v1/escolaIdeal/turmas', cors(), async function (request, response) {
+    
+    let dadosTurmas = await controllerTurmas.getListarTurmas()
+
+    if (dadosTurmas) {
+        response.json(dadosTurmas)
+        response.status(dadosTurmas.status_code)
+    } else {
+        response.json(404)
+    }
+})
+
+app.delete('/v1/escolaIdeal/deleteTurma/:id', cors(), async function(request,response) {
+    
+    let idTurma = request.params.id
+
+    let dadosTurma = await controllerTurmas.setExcluirTurma(idTurma)
+
+    response.json(dadosTurma)
+    response.status(dadosTurma.status_code)
+})
+
+app.post('/v1/escolaIdeal/turma', cors(), bodyParserJSON, async function(request, response) {
+
+    let contentType = request.headers['content-type']
+
+    let dadosBody = request.body
+
+    let dadosTurma = await controllerTurmas.setInserirTurma(dadosBody, contentType)
+
+    response.json(dadosTurma)
+    response.status(dadosTurma.status_code)
+})
+
+app.put('/v1/escolaIdeal/updateTurma/:id', cors(), bodyParserJSON, async function(request, response) {
+    
+    let idTurma = request.params.id
+    
+    let contentType = request.headers['content-type']
+    
+    let dadosBody = request.body
+
+    let atualizacaoTurma = await controllerTurmas.setAtualizarTurma(idTurma,dadosBody, contentType)
+
+    response.json(atualizacaoTurma)
+    response.status(atualizacaoTurma.status_code)
+})
+
+app.get('/v1/escolaIdeal/turma/:id', cors(), async function(request, response) {
+    
+    let idTurma = request.params.id
+
+    let dadosTurma = await controllerTurmas.getTurmaById(idTurma)
+
+    if (dadosTurma) {
+        response.json(dadosTurma)
+        response.status(200)
+    } else {
+        response.json({message: 'Nenhum registro foi encontrado!'})
+        response.status(404)
+    }
+})
+
+/**************************************************** ENDPOINTS FREQUENCIAS ****************************************************/
+
+app.get('/v1/escolaIdeal/somaFrequencia/:id', cors(), async function(request, response) {
+
+    let idMatricula = request.params.id
+
+    let somaFaltas = await controllerFrequencia.getSomaFaltas(idMatricula)
+    
+    if (somaFaltas) {
+        response.json(somaFaltas)
+        response.status(200)
+    } else {
+        response.json({message: 'Nenhum registro foi encontrado!'})
+        response.status(404)
+    }  
+})
+
+app.post('/v1/escolaIdeal/frequencia', cors(), bodyParserJSON, async function(request, response) {
+
+    
+    let contentType = request.headers['content-type']
+
+    let dadosBody = request.body
+
+    let dadosFrequencia = await controllerFrequencia.setInserirFrequencia(dadosBody, contentType)
+
+    response.json(dadosFrequencia)
+    response.status(200)
+})
+
+/**************************************************** ENDPOINTS NOTAS ****************************************************/
+
+app.post('/v1/escolaIdeal/nota', cors(), bodyParserJSON, async function(request, response) {
+
+    let contentType = request.headers['content-type']
+
+    let dadosBody = request.body
+
+    let dadosNota = await controllerNotas.setInserirNota(dadosBody, contentType)
+
+    response.json(dadosNota)
+    response.status(200)
+})
+
+app.put('/v1/escolaIdeal/updateNota/:id', cors(), bodyParserJSON,  async function(request, response) {
+    
+    let idNota = request.params.id
+    
+    let contentType = request.headers['content-type']
+    
+    let dadosBody = request.body
+
+    let atualizacaoNota = await controllerNotas.setAtualizarNota (idNota,dadosBody, contentType)
+
+    response.json(atualizacaoNota)
+    response.status(atualizacaoNota.status_code)
+})
+
+app.get('/v1/escolaIdeal/notas/:idMatricula/:idDisciplina', cors(), async function(request, response) {
+
+    let idMatricula = request.params.idMatricula
+    
+    let idDisciplina = request.params.idDisciplina
+
+    let notasDisciplina = await controllerNotas.getNotasDisciplina(idMatricula, idDisciplina)
+    
+    if (notasDisciplina) {
+        response.json(notasDisciplina)
+        response.status(200)
+    } else {
+        response.json({message: 'Nenhum registro foi encontrado!'})
+        response.status(404)
+    }
 })
 
 app.listen('8080', function() {
