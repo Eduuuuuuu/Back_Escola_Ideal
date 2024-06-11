@@ -40,31 +40,8 @@ CREATE TABLE IF NOT EXISTS `db_escola_ideal`.`tbl_sexo` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
-select * from tbl_responsaveis as r join tbl_responsavel_aluno as i on r.id=i.id_responsavel;
-select * from tbl_enderecos;
-desc tbl_enderecos;
-
-select r.id, r.nome, r.data_nascimento, r.email, r.cpf, r.telefone, s.nome as sexo, e.bairro, e.cep, e.cidade, e.logradouro, e.número from tbl_responsaveis as r
-join tbl_enderecos as e on r.id_endereco=e.id
-join tbl_sexo as s on s.id=r.id_sexo;
-
-select cast(last_insert_id() as decimal) as id from tbl_responsaveis limit 1;
-
-select m.id as matricula, a.nome, t.nome as turma, a.data_nascimento, a.email from tbl_matricula_turma as i
-join tbl_matriculas as m on m.id=i.id_matricula
-join tbl_alunos as a on a.id=m.id_aluno
-join tbl_turmas as t on t.id=i.id_turma
-where t.id=1;
-
-select * from tbl_disciplinas;
-select * from tbl_turmas;
-select * from tbl_matriculas;
-select * from tbl_matricula_turma;
 insert into tbl_sexo (nome, sigla) values ("Masculino", "M"), ("Feminino", "F");
-insert into tbl_turmas (nome) values ("8º");
-insert into tbl_matricula_turma (id_matricula, id_turma, `data`) values (2, 2, '2024-01-20');
-select * from tbl_alunostbl_enderecos;
-select cast(last_insert_id() as decimal) as id from tbl_alunos limit 1;
+
 -- -----------------------------------------------------
 -- Table `db_escola_ideal`.`tbl_alunos`
 -- -----------------------------------------------------
@@ -94,6 +71,20 @@ insert into tbl_alunos (nome, data_nascimento, email, foto, cpf, id_sexo) values
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0D1iGENjSwikmQPCEgt4lLN-8ChYuDu1JQg&s",
     "12350909012",
     "1"
+),(
+	"João Silva Pinto",
+    "2005-03-14",
+    "joaosilva@gmail.com",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0D1iGENjSwikmQPCEgt4lLN-8ChYuDu1JQg&s",
+    "12350908412",
+    "1"
+),(
+	"Valentina Lopez Batista",
+    "2006-12-02",
+    "valentina123@gmail.com",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROMwnAqX6pnPbDYO8t9QiEeAAbclqUQof7bg&s",
+    "12350905929",
+    "2"
 );
 
 -- -----------------------------------------------------
@@ -208,7 +199,6 @@ CREATE TABLE IF NOT EXISTS `db_escola_ideal`.`tbl_matriculas` (
 ENGINE = InnoDB;
 
 insert into tbl_matriculas (data_inicio, id_aluno, data_fim) values ("2023-01-28", "1", null);
-insert into tbl_matriculas (data_inicio, id_aluno, data_fim) values ("2023-01-28", "2", null);
 
 -- -----------------------------------------------------
 -- Table `db_escola_ideal`.`tbl_frequencia`
@@ -323,6 +313,7 @@ CREATE TABLE IF NOT EXISTS `db_escola_ideal`.`tbl_turmas` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
+insert into tbl_turmas (nome) values ("1º ANO"), ("2º ANO"), ("3º ANO");
 
 -- -----------------------------------------------------
 -- Table `db_escola_ideal`.`tbl_matricula_turma`
@@ -347,14 +338,47 @@ CREATE TABLE IF NOT EXISTS `db_escola_ideal`.`tbl_matricula_turma` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-ALTER TABLE tbl_disciplinas
-ADD FOREIGN KEY fk_tbl_disciplinas_tbl_professores1;
+insert into tbl_matricula_turma (id_matricula, id_turma, data) values ("1", "3", "2024-06-04"), ("3", "1", "2013-09-30"), ("2", "2", "2009-07-04");
+
+-- ALTER TABLE tbl_disciplinas
+-- ADD FOREIGN KEY fk_tbl_disciplinas_tbl_professores1;
 
 ALTER TABLE tbl_disciplinas
 ADD CONSTRAINT fk_tbl_disciplinas_tbl_professores1 FOREIGN KEY (id_professor)
 REFERENCES tbl_professores(id);
 
 drop table tbl_professores;
+
+select * from tbl_alunos;
+
+select * from tbl_matriculas;
+
+select * from tbl_turmas;
+
+select * from tbl_matricula_turma;
+
+select tbl_matriculas.id, data_inicio, id_aluno, data_fim
+from tbl_matriculas
+join tbl_matricula_turma on tbl_matriculas.id = tbl_matricula_turma.id_matricula
+where tbl_matricula_turma.id_matricula = 2;
+
+select m.id as matricula, t.nome as turma, m.data_inicio, m.data_fim from tbl_matricula_turma as i
+join tbl_matriculas as m on m.id=i.id_matricula
+join tbl_turmas as t on t.id=i.id_turma;
+
+SELECT tbl_turmas.id, nome
+FROM tbl_matricula_turma
+JOIN tbl_turmas ON tbl_matricula_turma.id_turma = tbl_turmas.id
+WHERE tbl_matricula_turma.id_matricula = 5;
+
+
+select m.id as matricula, t.nome as turma, m.data_inicio, m.data_fim from tbl_matricula_turma as i
+        join tbl_matriculas as m on m.id = i.id_matricula
+        join tbl_turmas as t on t.id = i.id_turma
+        where i.id_turma = 1;
+
+update tbl_matriculas set data_inicio = "2025-03-17", id_aluno = "3", data_fim = null where id = 5;
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
