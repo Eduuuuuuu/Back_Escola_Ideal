@@ -1,6 +1,6 @@
 const e = require('express')
 const responsavelDAO=require('../model/DAO/responsaveis.js')
-const message=require('../module/config.js')
+const message=require('../modulo/config.js')
 
 const setInserirNovoResponsavel=async function(dadosResponsavel, contentType){
     try {

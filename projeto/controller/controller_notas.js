@@ -113,10 +113,11 @@ const getNotasDisciplina = async function (id_matricula, id_disciplina){
 
                 let dadosDisciplina = await disciplinaDAO.selectDisciplinaById(idDisciplina)
                 let mediaNotas = await notasDAO.selectMediaNotas(idMatricula, idDisciplina)
+                console.log(mediaNotas);
 
                 notasJson.disciplina = dadosDisciplina
                 notasJson.notas = dadosNotas
-                notasJson.media = mediaNotas
+                notasJson.media = mediaNotas[0].media
                 notasJson.status_code = 200
 
                 return notasJson
